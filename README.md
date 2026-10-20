@@ -109,3 +109,9 @@ PNG generation requires ImageMagick's `convert` command. In production, set `PUB
 ```bash
 HOST=0.0.0.0 PORT=5000 PUBLIC_BASE_URL=http://178.128.210.194:5000 npm start
 ```
+
+Generated PNGs use `DejaVu Sans` by default for ImageMagick 6 compatibility. If the server has SF Pro installed, select it without a comma-separated fallback list:
+
+```bash
+IMAGE_FONT_FAMILY="SF Pro Text" npm start
+```

@@ -13,6 +13,7 @@ const branchSalesFile = path.join(__dirname, '..', 'data', 'branch-sales-records
 const dailySalesFile = path.join(__dirname, '..', 'data', 'daily-sales-records.json');
 const maxJsonBodySize = 10 * 1024 * 1024;
 const generatedImageFilePattern = /^report-[0-9]+-[a-f0-9]{8}\.png$/;
+const imageFontFamily = process.env.IMAGE_FONT_FAMILY || 'DejaVu Sans';
 
 const routes = {
   '/api/branch-sales': {
@@ -600,14 +601,13 @@ function renderTableImage({ title, theme, columns, data }) {
     }).join('');
   }).join('');
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
   <style>
     text {
-      font-family: "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Liberation Sans", sans-serif;
       font-size: 18px;
       fill: #111;
     }
-    .header { font-family: "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Liberation Sans", sans-serif; font-weight: 700; fill: #fff; }
+    .header { font-weight: 700; fill: #fff; }
     .updated { font-weight: 700; fill: #7f6000; }
   </style>
   ${header}
