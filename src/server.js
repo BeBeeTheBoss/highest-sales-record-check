@@ -499,7 +499,7 @@ function renderTable({ title, theme, columns, data }) {
   <style>
     :root {
       color-scheme: light;
-      font-family: Calibri, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     }
     * { box-sizing: border-box; }
     body {
@@ -602,8 +602,12 @@ function renderTableImage({ title, theme, columns, data }) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}">
   <style>
-    text { font: 18px Calibri, Arial, sans-serif; fill: #111; }
-    .header { font-weight: 700; fill: #fff; }
+    text {
+      font-family: "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Liberation Sans", sans-serif;
+      font-size: 18px;
+      fill: #111;
+    }
+    .header { font-family: "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Liberation Sans", sans-serif; font-weight: 700; fill: #fff; }
     .updated { font-weight: 700; fill: #7f6000; }
   </style>
   ${header}
