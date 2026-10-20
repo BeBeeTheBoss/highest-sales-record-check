@@ -2,76 +2,91 @@
   {
     "rnk": 1,
     "saleamnt": 4277137492,
-    "date": "2026-05-31"
+    "date": "2026-05-31",
+    "is_update_today": false
   },
   {
     "rnk": 2,
     "saleamnt": 4118332749,
-    "date": "2026-05-30"
+    "date": "2026-05-30",
+    "is_update_today": false
   },
   {
     "rnk": 3,
     "saleamnt": 3935502503,
-    "date": "2026-10-08"
+    "date": "2026-10-08",
+    "is_update_today": false
   },
   {
     "rnk": 4,
     "saleamnt": 3922026922,
-    "date": "2026-10-10"
+    "date": "2026-10-10",
+    "is_update_today": false
   },
   {
     "rnk": 5,
     "saleamnt": 3854410619,
-    "date": "2026-05-24"
+    "date": "2026-05-24",
+    "is_update_today": false
   },
   {
     "rnk": 6,
     "saleamnt": 3846438054,
-    "date": "2025-11-30"
+    "date": "2025-11-30",
+    "is_update_today": false
   },
   {
     "rnk": 7,
     "saleamnt": 3794160602,
-    "date": "2026-01-24"
+    "date": "2026-01-24",
+    "is_update_today": false
   },
   {
     "rnk": 8,
     "saleamnt": 3791844673,
-    "date": "2026-05-29"
+    "date": "2026-05-29",
+    "is_update_today": false
   },
   {
     "rnk": 9,
     "saleamnt": 3563316366,
-    "date": "2026-05-06"
+    "date": "2026-05-06",
+    "is_update_today": false
   },
   {
     "rnk": 10,
     "saleamnt": 3531718440,
-    "date": "2026-10-03"
+    "date": "2026-10-03",
+    "is_update_today": false
   },
   {
     "rnk": 11,
     "saleamnt": 3524221807,
-    "date": "2025-11-28"
+    "date": "2025-11-28",
+    "is_update_today": false
   },
   {
     "rnk": 12,
     "saleamnt": 3505731195,
-    "date": "2026-10-09"
+    "date": "2026-10-09",
+    "is_update_today": false
   },
   {
     "rnk": 13,
     "saleamnt": 3497486025,
-    "date": "2025-11-09"
+    "date": "2025-11-09",
+    "is_update_today": false
   },
   {
     "rnk": 14,
     "saleamnt": 3431649577,
-    "date": "2025-04-04"
+    "date": "2025-04-04",
+    "is_update_today": false
   },
   {
     "rnk": 15,
     "saleamnt": 3403139024,
-    "date": "2026-10-15"
+    "date": "2026-10-15",
+    "is_update_today": false
   }
 ]

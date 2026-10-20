@@ -4,97 +4,111 @@
     "branch_code": "MM-105",
     "branch_name": "Mawlamyine",
     "saleamnt": 1885058600,
-    "date": "2025-11-09"
+    "date": "2025-11-09",
+    "is_update_today": false
   },
   {
     "rnk": 2,
     "branch_code": "MM-103",
     "branch_name": "Satsan",
     "saleamnt": 1656807871,
-    "date": "2026-05-24"
+    "date": "2026-05-24",
+    "is_update_today": false
   },
   {
     "rnk": 3,
     "branch_code": "MM-101",
     "branch_name": "Lanthit",
     "saleamnt": 1541354015,
-    "date": "2026-01-24"
+    "date": "2026-01-24",
+    "is_update_today": false
   },
   {
     "rnk": 4,
     "branch_code": "MM-108",
     "branch_name": "Aye Tharyar",
     "saleamnt": 1179288111,
-    "date": "2026-05-31"
+    "date": "2026-05-31",
+    "is_update_today": false
   },
   {
     "rnk": 5,
     "branch_code": "MM-104",
     "branch_name": "East Dagon",
     "saleamnt": 1020888594,
-    "date": "2025-11-28"
+    "date": "2025-11-28",
+    "is_update_today": false
   },
   {
     "rnk": 6,
     "branch_code": "MM-106",
     "branch_name": "Tampawady",
     "saleamnt": 806644234,
-    "date": "2026-05-31"
+    "date": "2026-05-31",
+    "is_update_today": false
   },
   {
     "rnk": 7,
     "branch_code": "MM-110",
     "branch_name": "Bago",
     "saleamnt": 773770234,
-    "date": "2025-01-12"
+    "date": "2025-01-12",
+    "is_update_today": false
   },
   {
     "rnk": 8,
     "branch_code": "MM-114",
     "branch_name": "Da Nyin Gone",
     "saleamnt": 659459181,
-    "date": "2025-12-11"
+    "date": "2025-12-11",
+    "is_update_today": false
   },
   {
     "rnk": 9,
     "branch_code": "MM-107",
     "branch_name": "Hlaing Tharyar",
     "saleamnt": 635470193,
-    "date": "2024-12-21"
+    "date": "2024-12-21",
+    "is_update_today": false
   },
   {
     "rnk": 10,
     "branch_code": "MM-102",
     "branch_name": "Theik Pan",
     "saleamnt": 623365714,
-    "date": "2024-12-01"
+    "date": "2024-12-01",
+    "is_update_today": false
   },
   {
     "rnk": 11,
     "branch_code": "MM-109",
     "branch_name": "Mingalardon",
     "saleamnt": 490154409,
-    "date": "2025-10-11"
+    "date": "2025-10-11",
+    "is_update_today": false
   },
   {
     "rnk": 12,
     "branch_code": "MM-113",
     "branch_name": "South Dagon",
     "saleamnt": 439822018,
-    "date": "2025-05-31"
+    "date": "2025-05-31",
+    "is_update_today": false
   },
   {
     "rnk": 13,
     "branch_code": "MM-112",
     "branch_name": "PRO 1 PLUS (Terminal M)",
     "saleamnt": 309694013,
-    "date": "2026-03-01"
+    "date": "2026-03-01",
+    "is_update_today": false
   },
   {
     "rnk": 14,
     "branch_code": "MM-115",
     "branch_name": "Nay Pyi Taw",
     "saleamnt": 251939066,
-    "date": "2026-07-27"
+    "date": "2026-07-27",
+    "is_update_today": false
   }
 ]

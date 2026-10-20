@@ -3,8 +3,15 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
-const { handleRequest } = require('../src/server');
+const {
+  calculateBranchSalesUpdates,
+  calculateDailySalesUpdate,
+  deleteGeneratedImages,
+  handleRequest,
+  renderTableImage
+} = require('../src/server');
 
 function request(url, method = 'GET') {
   const result = { headers: {} };
@@ -35,6 +42,7 @@ test('branch sales endpoint returns the blue HTML table', () => {
   assert.match(response.body, /MM-105/);
   assert.match(response.body, /Mawlamyine/);
   assert.match(response.body, /1,885,058,600/);
+  assert.match(response.body, /09-11-2025/);
 });
 
 test('daily sales endpoint returns the green HTML table', () => {
@@ -96,5 +104,145 @@ test('image-url endpoint generates and serves a PNG URL', () => {
     if (fs.existsSync(imageFile)) {
       fs.unlinkSync(imageFile);
     }
+  }
+});
+
+test('uploaded rows are totaled by branch and only a new record is updated', () => {
+  const records = [
+    { rnk: 1, branch_code: 'MM-101', branch_name: 'Lanthit', saleamnt: 200, date: '2026-01-01' },
+    { rnk: 2, branch_code: 'MM-105', branch_name: 'Mawlamyine', saleamnt: 100, date: '2026-01-01' }
+  ];
+  const payload = [{
+    data: [
+      { branch_name: 'MM-105-/-Mawlamyine', dtype: 'Daily : 19/10/2026', saleamnt: '60.2500' },
+      { branch_name: 'MM-105-/-Mawlamyine', dtype: 'Daily : 19/10/2026', saleamnt: '40.2500' }
+    ]
+  }];
+
+  const result = calculateBranchSalesUpdates(records, payload, '2026-10-20');
+  const updated = result.records.find((record) => record.branch_code === 'MM-105');
+  const untouched = result.records.find((record) => record.branch_code === 'MM-101');
+
+  assert.equal(result.updatedBranches.length, 1);
+  assert.equal(result.processedRows, 2);
+  assert.equal(updated.saleamnt, 100.5);
+  assert.equal(result.reportDate, '2026-10-19');
+  assert.equal(result.updateDate, '2026-10-20');
+  assert.equal(updated.date, '2026-10-20');
+  assert.equal(updated.is_update_today, true);
+  assert.equal(untouched.saleamnt, 200);
+  assert.equal(untouched.is_update_today, false);
+});
+
+test('uploaded rows with mixed report dates are rejected', () => {
+  const records = [
+    { rnk: 1, branch_code: 'MM-105', branch_name: 'Mawlamyine', saleamnt: 100, date: '2026-01-01' }
+  ];
+  const payload = { data: [
+    { branch_name: 'MM-105-/-Mawlamyine', dtype: 'Daily : 19/10/2026', saleamnt: '60' },
+    { branch_name: 'MM-105-/-Mawlamyine', dtype: 'Daily : 20/10/2026', saleamnt: '60' }
+  ] };
+
+  assert.throws(
+    () => calculateBranchSalesUpdates(records, payload),
+    /same report date/
+  );
+});
+
+test('branch image highlights records updated today', () => {
+  const svg = renderTableImage({
+    title: 'Test Branch Sales',
+    theme: 'blue',
+    columns: [
+      { key: 'rnk', label: 'rnk' },
+      { key: 'branch_code', label: 'branch_code' },
+      { key: 'branch_name', label: 'branch_name' },
+      { key: 'saleamnt', label: 'saleamnt', className: 'number' },
+      { key: 'date', label: 'date' }
+    ],
+    data: [{
+      rnk: 1,
+      branch_code: 'MM-105',
+      branch_name: 'Mawlamyine',
+      saleamnt: 200,
+      date: '2026-10-20',
+      is_update_today: true
+    }]
+  });
+
+  assert.match(svg, /fill="#fff2cc"/);
+  assert.match(svg, /stroke="#d6b656"/);
+  assert.match(svg, /class="updated"/);
+  assert.match(svg, /width="760"/);
+});
+
+test('all-branches total enters the daily top 15 and displaces the lowest record', () => {
+  const records = Array.from({ length: 15 }, (_, index) => ({
+    rnk: index + 1,
+    saleamnt: 1500 - (index * 100),
+    date: `2026-09-${String(index + 1).padStart(2, '0')}`
+  }));
+  const payload = { data: [
+    { dtype: 'Daily : 19/10/2026', saleamnt: '100.0000' },
+    { dtype: 'Daily : 19/10/2026', saleamnt: '50.0000' }
+  ] };
+
+  const result = calculateDailySalesUpdate(records, payload, '2026-10-20');
+
+  assert.equal(result.allBranchesTotal, 150);
+  assert.equal(result.action, 'inserted');
+  assert.equal(result.isTop15, true);
+  assert.equal(result.records.length, 15);
+  assert.equal(result.records.at(-1).saleamnt, 150);
+  assert.equal(result.records.at(-1).date, '2026-10-20');
+  assert.equal(result.records.at(-1).is_update_today, true);
+  assert.equal(result.records.filter((record) => record.is_update_today).length, 1);
+  assert.equal(result.displacedRecord.saleamnt, 100);
+  assert.deepEqual(result.records.map((record) => record.rnk), Array.from({ length: 15 }, (_, index) => index + 1));
+});
+
+test('all-branches total below the daily top 15 is ignored', () => {
+  const records = Array.from({ length: 15 }, (_, index) => ({
+    rnk: index + 1,
+    saleamnt: 1500 - (index * 100),
+    date: `2026-09-${String(index + 1).padStart(2, '0')}`
+  }));
+  const payload = { data: [
+    { dtype: 'Daily : 19/10/2026', saleamnt: '40.0000' },
+    { dtype: 'Daily : 19/10/2026', saleamnt: '50.0000' }
+  ] };
+
+  const result = calculateDailySalesUpdate(records, payload, '2026-10-20');
+
+  assert.equal(result.allBranchesTotal, 90);
+  assert.equal(result.action, 'not_qualified');
+  assert.equal(result.isTop15, false);
+  assert.equal(result.records.length, 15);
+  assert.equal(result.records.at(-1).saleamnt, 100);
+  assert.equal(result.records.every((record) => record.is_update_today === false), true);
+});
+
+test('image cleanup deletes only generated report PNG files', () => {
+  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'sales-images-test-'));
+  const generatedFiles = [
+    'report-1792380968523-1ff2bc09.png',
+    'report-1792380968524-aabbccdd.png'
+  ];
+
+  try {
+    for (const fileName of generatedFiles) {
+      fs.writeFileSync(path.join(temporaryDirectory, fileName), 'generated image');
+    }
+    fs.writeFileSync(path.join(temporaryDirectory, '.gitkeep'), '');
+    fs.writeFileSync(path.join(temporaryDirectory, 'keep-this.png'), 'user image');
+
+    const deletedFiles = deleteGeneratedImages(temporaryDirectory);
+
+    assert.deepEqual(deletedFiles, generatedFiles);
+    assert.equal(fs.existsSync(path.join(temporaryDirectory, generatedFiles[0])), false);
+    assert.equal(fs.existsSync(path.join(temporaryDirectory, '.gitkeep')), true);
+    assert.equal(fs.existsSync(path.join(temporaryDirectory, 'keep-this.png')), true);
+  } finally {
+    fs.rmSync(temporaryDirectory, { recursive: true, force: true });
   }
 });
