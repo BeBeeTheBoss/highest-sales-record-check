@@ -172,7 +172,7 @@ test('branch image highlights records updated today', () => {
 
   assert.match(svg, /fill="#fffaf0"/);
   assert.match(svg, /fill="#d6b656"/);
-  assert.match(svg, /class="updated"/);
+  assert.match(svg, /class="cell updated"/);
   assert.match(svg, /width="872"/);
   assert.match(svg, /font-family="DejaVu Sans"/);
   assert.match(svg, /fill="none" stroke="#e2e8f0"/);

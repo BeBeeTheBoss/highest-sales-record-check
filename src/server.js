@@ -640,7 +640,7 @@ function renderTableImage({ title, theme, columns, data }) {
     const fill = isUpdatedToday
       ? '#fffaf0'
       : '#ffffff';
-    const textClass = isUpdatedToday ? ' class="updated"' : '';
+    const textClass = isUpdatedToday ? 'cell updated' : 'cell';
     const cells = columns.map((column, columnIndex) => {
       const x = margin + columnWidths.slice(0, columnIndex).reduce((total, value) => total + value, 0);
       const displayedValue = column.format
@@ -649,7 +649,7 @@ function renderTableImage({ title, theme, columns, data }) {
       const numeric = columnIndex === 0 || column.className === 'number';
       const textX = numeric ? x + columnWidths[columnIndex] - 14 : x + 14;
       const anchor = numeric ? 'end' : 'start';
-      return `<text x="${textX}" y="${y + 24}" text-anchor="${anchor}"${textClass}>${escapeHtml(displayedValue)}</text>`;
+      return `<text x="${textX}" y="${y + 24}" text-anchor="${anchor}" class="${textClass}">${escapeHtml(displayedValue)}</text>`;
     }).join('');
     const updateMarker = isUpdatedToday
       ? `<rect x="${margin}" y="${y}" width="3" height="${rowHeight}" fill="#d6b656"/>`
@@ -672,7 +672,8 @@ function renderTableImage({ title, theme, columns, data }) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
   <style>
-    text { font-size: 17px; fill: #334155; }
+    text { font-size: 15px; fill: #334155; }
+    .cell { font-size: 17px; }
     .title { font-size: 22px; font-weight: 700; fill: #0f172a; }
     .count { font-size: 11px; fill: #94a3b8; }
     .column-header { font-size: 12px; font-weight: 700; fill: #64748b; }
