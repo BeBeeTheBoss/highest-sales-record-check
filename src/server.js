@@ -579,12 +579,12 @@ function renderTable({ title, theme, columns, data }) {
     tbody tr:hover td { background: #fafbfc; }
     tbody tr:last-child td { border-bottom: 0; }
     tbody tr.updated td {
-      color: #7c5a10;
-      background: #fffaf0;
+      color: #78350f;
+      background: #fef3c7;
       font-weight: 700;
     }
     tbody tr.updated td:first-child {
-      box-shadow: inset 4px 0 #d6b656;
+      box-shadow: inset 4px 0 #f59e0b;
     }
     .rank {
       color: #64748b;
@@ -638,9 +638,10 @@ function renderTableImage({ title, theme, columns, data }) {
     const y = tableY + headerHeight + (rowIndex * rowHeight);
     const isUpdatedToday = record.is_update_today === true;
     const fill = isUpdatedToday
-      ? '#fffaf0'
+      ? '#fef3c7'
       : '#ffffff';
-    const textClass = isUpdatedToday ? 'cell updated' : 'cell';
+    const rowStroke = isUpdatedToday ? '#f59e0b' : borderColor;
+    const textClass = isUpdatedToday ? 'cell-updated' : 'cell';
     const cells = columns.map((column, columnIndex) => {
       const x = margin + columnWidths.slice(0, columnIndex).reduce((total, value) => total + value, 0);
       const displayedValue = column.format
@@ -652,10 +653,10 @@ function renderTableImage({ title, theme, columns, data }) {
       return `<text x="${textX}" y="${y + 24}" text-anchor="${anchor}" class="${textClass}">${escapeHtml(displayedValue)}</text>`;
     }).join('');
     const updateMarker = isUpdatedToday
-      ? `<rect x="${margin}" y="${y}" width="3" height="${rowHeight}" fill="#d6b656"/>`
+      ? `<rect x="${margin}" y="${y}" width="4" height="${rowHeight}" fill="#f59e0b"/>`
       : '';
     return `<g>
-      <rect x="${margin}" y="${y}" width="${tableWidth}" height="${rowHeight}" fill="${fill}" stroke="${borderColor}" stroke-width="1" shape-rendering="crispEdges"/>
+      <rect x="${margin}" y="${y}" width="${tableWidth}" height="${rowHeight}" fill="${fill}" stroke="${rowStroke}" stroke-width="1" shape-rendering="crispEdges"/>
       ${updateMarker}
       ${cells}
     </g>`;
@@ -673,10 +674,10 @@ function renderTableImage({ title, theme, columns, data }) {
   <style>
     text { font-size: 15px; fill: #334155; }
     .cell { font-size: 17px; }
+    .cell-updated { font-size: 17px; font-weight: 700; fill: #78350f; }
     .title { font-size: 22px; font-weight: 700; fill: #0f172a; }
     .count { font-size: 11px; fill: #94a3b8; }
     .column-header { font-size: 12px; font-weight: 700; fill: #64748b; }
-    .updated { font-weight: 700; fill: #7c5a10; }
   </style>
   <rect width="${width}" height="${height}" fill="#ffffff"/>
   <text x="${margin}" y="34" class="title">${escapeHtml(title)}</text>
