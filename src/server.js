@@ -623,7 +623,7 @@ function renderTableImage({ title, theme, columns, data }) {
   const width = tableWidth + (margin * 2);
   const height = tableY + headerHeight + (data.length * rowHeight) + 16;
   const accentColor = theme === 'blue' ? '#2563eb' : '#059669';
-  const borderColor = '#e2e8f0';
+  const borderColor = '#cbd5e1';
 
   const header = columns.map((column, index) => {
     const x = margin + columnWidths.slice(0, index).reduce((total, value) => total + value, 0);
@@ -655,8 +655,7 @@ function renderTableImage({ title, theme, columns, data }) {
       ? `<rect x="${margin}" y="${y}" width="3" height="${rowHeight}" fill="#d6b656"/>`
       : '';
     return `<g>
-      <rect x="${margin}" y="${y}" width="${tableWidth}" height="${rowHeight}" fill="${fill}"/>
-      <line x1="${margin}" y1="${y + rowHeight}" x2="${margin + tableWidth}" y2="${y + rowHeight}" stroke="${borderColor}"/>
+      <rect x="${margin}" y="${y}" width="${tableWidth}" height="${rowHeight}" fill="${fill}" stroke="${borderColor}" stroke-width="1" shape-rendering="crispEdges"/>
       ${updateMarker}
       ${cells}
     </g>`;
@@ -667,7 +666,7 @@ function renderTableImage({ title, theme, columns, data }) {
     const x = margin + columnWidths
       .slice(0, index + 1)
       .reduce((total, value) => total + value, 0);
-    return `<line x1="${x}" y1="${tableY}" x2="${x}" y2="${tableBottom}" stroke="${borderColor}"/>`;
+    return `<line x1="${x}" y1="${tableY}" x2="${x}" y2="${tableBottom}" stroke="${borderColor}" stroke-width="1" shape-rendering="crispEdges"/>`;
   }).join('');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
@@ -683,13 +682,11 @@ function renderTableImage({ title, theme, columns, data }) {
   <text x="${margin}" y="34" class="title">${escapeHtml(title)}</text>
   <text x="${width - margin}" y="33" text-anchor="end" class="count">${data.length} records</text>
   <rect x="${margin}" y="47" width="34" height="3" fill="${accentColor}"/>
-  <line x1="${margin}" y1="${tableY}" x2="${margin + tableWidth}" y2="${tableY}" stroke="${borderColor}"/>
-  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${headerHeight}" fill="#f8fafc"/>
-  <line x1="${margin}" y1="${tableY + headerHeight}" x2="${margin + tableWidth}" y2="${tableY + headerHeight}" stroke="#cbd5e1"/>
+  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${headerHeight}" fill="#f8fafc" stroke="${borderColor}" stroke-width="1" shape-rendering="crispEdges"/>
   ${header}
   ${rows}
   ${verticalLines}
-  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${tableBottom - tableY}" fill="none" stroke="${borderColor}"/>
+  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${tableBottom - tableY}" fill="none" stroke="${borderColor}" stroke-width="1" shape-rendering="crispEdges"/>
 </svg>`;
 }
 
