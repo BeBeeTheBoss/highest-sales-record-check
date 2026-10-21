@@ -660,10 +660,10 @@ function renderTableImage({ title, theme, columns, data }) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
   <style>
-    text { font-size: 15px; fill: #334155; }
-    .title { font-size: 20px; font-weight: 700; fill: #0f172a; }
+    text { font-size: 17px; fill: #334155; }
+    .title { font-size: 22px; font-weight: 700; fill: #0f172a; }
     .count { font-size: 11px; fill: #94a3b8; }
-    .column-header { font-size: 11px; font-weight: 700; fill: #64748b; }
+    .column-header { font-size: 12px; font-weight: 700; fill: #64748b; }
     .updated { font-weight: 700; fill: #7c5a10; }
   </style>
   <rect width="${width}" height="${height}" fill="#ffffff"/>
