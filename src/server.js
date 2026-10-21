@@ -474,20 +474,23 @@ function isUpdateAuthorized(request) {
 }
 
 function renderTable({ title, theme, columns, data }) {
+  const accentColor = theme === 'blue' ? '#2563eb' : '#059669';
   const header = columns
-    .map((column) => `<th>${escapeHtml(column.label)}</th>`)
+    .map((column) => `<th${column.className === 'number' ? ' class="number"' : ''}>${escapeHtml(column.label.replaceAll('_', ' '))}</th>`)
     .join('');
 
   const rows = data
     .map((record) => {
-      const cells = columns.map((column) => {
+      const cells = columns.map((column, columnIndex) => {
         const displayedValue = column.format
           ? column.format(record[column.key])
           : record[column.key];
-        const className = column.className ? ` class="${column.className}"` : '';
+        const classes = [column.className, columnIndex === 0 ? 'rank' : ''].filter(Boolean);
+        const className = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
         return `<td${className}>${escapeHtml(displayedValue)}</td>`;
       }).join('');
-      return `<tr>${cells}</tr>`;
+      const rowClass = record.is_update_today === true ? ' class="updated"' : '';
+      return `<tr${rowClass}>${cells}</tr>`;
     })
     .join('');
 
@@ -501,56 +504,104 @@ function renderTable({ title, theme, columns, data }) {
     :root {
       color-scheme: light;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      --accent: ${accentColor};
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      background: #f5f7fa;
+      background: #ffffff;
       display: grid;
       place-items: start center;
-      padding: 32px 16px;
+      padding: 40px 20px;
+      color: #0f172a;
     }
-    .table-wrap {
+    .table-page {
+      width: max-content;
+      max-width: 100%;
+    }
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      padding: 0 4px 18px;
+      border-bottom: 2px solid var(--accent);
+    }
+    h1 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .record-count {
+      flex: 0 0 auto;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .table-scroll {
       max-width: 100%;
       overflow-x: auto;
-      border: 1px solid #b7c4d2;
-      box-shadow: 0 6px 22px rgba(26, 55, 84, 0.12);
-      background: white;
     }
     table {
-      border-collapse: collapse;
-      min-width: ${theme === 'blue' ? '760px' : '430px'};
-      font-size: 18px;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: ${theme === 'blue' ? '824px' : '444px'};
+      font-size: 15px;
       font-variant-numeric: tabular-nums;
     }
     th, td {
-      border: 1px solid #bdcad7;
-      padding: 3px 9px;
+      padding: 12px 14px;
       white-space: nowrap;
       text-align: left;
     }
     th {
-      color: white;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 11px;
       font-weight: 700;
-      background: ${theme === 'blue' ? '#5b9bd5' : '#70c83f'};
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #cbd5e1;
     }
-    td:first-child { text-align: right; }
-    td.number { text-align: right; }
-    tr:nth-child(odd) td {
-      background: ${theme === 'blue' ? '#d9eaf7' : '#ffffff'};
+    td {
+      color: #334155;
+      background: #fff;
+      border-bottom: 1px solid #e8edf3;
     }
-    tr:nth-child(even) td {
-      background: ${theme === 'blue' ? '#ffffff' : '#f4f4f4'};
+    tbody tr:nth-child(even) td { background: #fff; }
+    tbody tr:hover td { background: #fafbfc; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr.updated td {
+      color: #7c5a10;
+      background: #fffaf0;
+      font-weight: 700;
     }
+    tbody tr.updated td:first-child {
+      box-shadow: inset 4px 0 #d6b656;
+    }
+    .rank {
+      color: #64748b;
+      text-align: center;
+      font-weight: 750;
+    }
+    th.number, td.number { text-align: right; }
   </style>
 </head>
 <body>
-  <main class="table-wrap">
-    <table aria-label="${escapeHtml(title)}">
-      <thead><tr>${header}</tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+  <main class="table-page">
+    <header class="page-head">
+      <h1>${escapeHtml(title)}</h1>
+      <span class="record-count">${data.length} records</span>
+    </header>
+    <div class="table-scroll">
+      <table aria-label="${escapeHtml(title)}">
+        <thead><tr>${header}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
   </main>
 </body>
 </html>`;
@@ -558,58 +609,70 @@ function renderTable({ title, theme, columns, data }) {
 
 function renderTableImage({ title, theme, columns, data }) {
   const columnWidths = theme === 'blue'
-    ? [55, 140, 260, 175, 130]
-    : [60, 180, 150];
-  const headerHeight = 34;
-  const rowHeight = 30;
-  const width = columnWidths.reduce((total, value) => total + value, 0);
-  const height = headerHeight + (data.length * rowHeight);
-  const headerColor = theme === 'blue' ? '#5b9bd5' : '#70c83f';
-  const oddColor = theme === 'blue' ? '#d9eaf7' : '#ffffff';
-  const evenColor = theme === 'blue' ? '#ffffff' : '#f4f4f4';
-  const borderColor = '#bdcad7';
+    ? [64, 145, 270, 190, 155]
+    : [64, 210, 170];
+  const margin = 24;
+  const tableY = 64;
+  const headerHeight = 38;
+  const rowHeight = 36;
+  const tableWidth = columnWidths.reduce((total, value) => total + value, 0);
+  const width = tableWidth + (margin * 2);
+  const height = tableY + headerHeight + (data.length * rowHeight) + 16;
+  const accentColor = theme === 'blue' ? '#2563eb' : '#059669';
+  const borderColor = '#e2e8f0';
 
   const header = columns.map((column, index) => {
-    const x = columnWidths.slice(0, index).reduce((total, value) => total + value, 0);
-    return `<g>
-      <rect x="${x}" y="0" width="${columnWidths[index]}" height="${headerHeight}" fill="${headerColor}" stroke="${borderColor}"/>
-      <text x="${x + 9}" y="22" class="header">${escapeHtml(column.label)}</text>
-    </g>`;
+    const x = margin + columnWidths.slice(0, index).reduce((total, value) => total + value, 0);
+    const numeric = index === 0 || column.className === 'number';
+    const textX = numeric ? x + columnWidths[index] - 14 : x + 14;
+    const anchor = numeric ? 'end' : 'start';
+    const label = column.label.replaceAll('_', ' ').toUpperCase();
+    return `<text x="${textX}" y="${tableY + 26}" text-anchor="${anchor}" class="column-header">${escapeHtml(label)}</text>`;
   }).join('');
 
   const rows = data.map((record, rowIndex) => {
-    const y = headerHeight + (rowIndex * rowHeight);
+    const y = tableY + headerHeight + (rowIndex * rowHeight);
     const isUpdatedToday = record.is_update_today === true;
     const fill = isUpdatedToday
-      ? '#fff2cc'
-      : rowIndex % 2 === 0 ? oddColor : evenColor;
-    const cellBorderColor = isUpdatedToday ? '#d6b656' : borderColor;
-    const strokeWidth = isUpdatedToday ? 2 : 1;
+      ? '#fffaf0'
+      : '#ffffff';
     const textClass = isUpdatedToday ? ' class="updated"' : '';
-    return columns.map((column, columnIndex) => {
-      const x = columnWidths.slice(0, columnIndex).reduce((total, value) => total + value, 0);
+    const cells = columns.map((column, columnIndex) => {
+      const x = margin + columnWidths.slice(0, columnIndex).reduce((total, value) => total + value, 0);
       const displayedValue = column.format
         ? column.format(record[column.key])
         : record[column.key];
       const numeric = columnIndex === 0 || column.className === 'number';
-      const textX = numeric ? x + columnWidths[columnIndex] - 9 : x + 9;
+      const textX = numeric ? x + columnWidths[columnIndex] - 14 : x + 14;
       const anchor = numeric ? 'end' : 'start';
-      return `<g>
-        <rect x="${x}" y="${y}" width="${columnWidths[columnIndex]}" height="${rowHeight}" fill="${fill}" stroke="${cellBorderColor}" stroke-width="${strokeWidth}"/>
-        <text x="${textX}" y="${y + 21}" text-anchor="${anchor}"${textClass}>${escapeHtml(displayedValue)}</text>
-      </g>`;
+      return `<text x="${textX}" y="${y + 24}" text-anchor="${anchor}"${textClass}>${escapeHtml(displayedValue)}</text>`;
     }).join('');
+    const updateMarker = isUpdatedToday
+      ? `<rect x="${margin}" y="${y}" width="3" height="${rowHeight}" fill="#d6b656"/>`
+      : '';
+    return `<g>
+      <rect x="${margin}" y="${y}" width="${tableWidth}" height="${rowHeight}" fill="${fill}"/>
+      <line x1="${margin}" y1="${y + rowHeight}" x2="${margin + tableWidth}" y2="${y + rowHeight}" stroke="${borderColor}"/>
+      ${updateMarker}
+      ${cells}
+    </g>`;
   }).join('');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
   <style>
-    text {
-      font-size: 18px;
-      fill: #111;
-    }
-    .header { font-weight: 700; fill: #fff; }
-    .updated { font-weight: 700; fill: #7f6000; }
+    text { font-size: 15px; fill: #334155; }
+    .title { font-size: 20px; font-weight: 700; fill: #0f172a; }
+    .count { font-size: 11px; fill: #94a3b8; }
+    .column-header { font-size: 11px; font-weight: 700; fill: #64748b; }
+    .updated { font-weight: 700; fill: #7c5a10; }
   </style>
+  <rect width="${width}" height="${height}" fill="#ffffff"/>
+  <text x="${margin}" y="34" class="title">${escapeHtml(title)}</text>
+  <text x="${width - margin}" y="33" text-anchor="end" class="count">${data.length} records</text>
+  <rect x="${margin}" y="47" width="34" height="3" fill="${accentColor}"/>
+  <line x1="${margin}" y1="${tableY}" x2="${margin + tableWidth}" y2="${tableY}" stroke="${borderColor}"/>
+  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${headerHeight}" fill="#f8fafc"/>
+  <line x1="${margin}" y1="${tableY + headerHeight}" x2="${margin + tableWidth}" y2="${tableY + headerHeight}" stroke="#cbd5e1"/>
   ${header}
   ${rows}
 </svg>`;

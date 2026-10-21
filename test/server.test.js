@@ -170,10 +170,10 @@ test('branch image highlights records updated today', () => {
     }]
   });
 
-  assert.match(svg, /fill="#fff2cc"/);
-  assert.match(svg, /stroke="#d6b656"/);
+  assert.match(svg, /fill="#fffaf0"/);
+  assert.match(svg, /fill="#d6b656"/);
   assert.match(svg, /class="updated"/);
-  assert.match(svg, /width="760"/);
+  assert.match(svg, /width="872"/);
   assert.match(svg, /font-family="DejaVu Sans"/);
 });
 
