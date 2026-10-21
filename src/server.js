@@ -548,6 +548,7 @@ function renderTable({ title, theme, columns, data }) {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
+      border: 1px solid #e2e8f0;
       min-width: ${theme === 'blue' ? '824px' : '444px'};
       font-size: 15px;
       font-variant-numeric: tabular-nums;
@@ -556,6 +557,9 @@ function renderTable({ title, theme, columns, data }) {
       padding: 12px 14px;
       white-space: nowrap;
       text-align: left;
+    }
+    th:not(:last-child), td:not(:last-child) {
+      border-right: 1px solid #e2e8f0;
     }
     th {
       color: #64748b;
@@ -658,6 +662,14 @@ function renderTableImage({ title, theme, columns, data }) {
     </g>`;
   }).join('');
 
+  const tableBottom = tableY + headerHeight + (data.length * rowHeight);
+  const verticalLines = columnWidths.slice(0, -1).map((_, index) => {
+    const x = margin + columnWidths
+      .slice(0, index + 1)
+      .reduce((total, value) => total + value, 0);
+    return `<line x1="${x}" y1="${tableY}" x2="${x}" y2="${tableBottom}" stroke="${borderColor}"/>`;
+  }).join('');
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}" font-family="${escapeHtml(imageFontFamily)}">
   <style>
     text { font-size: 17px; fill: #334155; }
@@ -675,6 +687,8 @@ function renderTableImage({ title, theme, columns, data }) {
   <line x1="${margin}" y1="${tableY + headerHeight}" x2="${margin + tableWidth}" y2="${tableY + headerHeight}" stroke="#cbd5e1"/>
   ${header}
   ${rows}
+  ${verticalLines}
+  <rect x="${margin}" y="${tableY}" width="${tableWidth}" height="${tableBottom - tableY}" fill="none" stroke="${borderColor}"/>
 </svg>`;
 }
 

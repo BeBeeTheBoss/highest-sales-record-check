@@ -175,6 +175,7 @@ test('branch image highlights records updated today', () => {
   assert.match(svg, /class="updated"/);
   assert.match(svg, /width="872"/);
   assert.match(svg, /font-family="DejaVu Sans"/);
+  assert.match(svg, /fill="none" stroke="#e2e8f0"/);
 });
 
 test('all-branches total enters the daily top 15 and displaces the lowest record', () => {
